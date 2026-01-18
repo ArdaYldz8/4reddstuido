@@ -444,10 +444,9 @@ export default function StaggeredMenu({
                             fontSize: '3rem',
                             fontWeight: '700',
                             color: '#000',
-                            textTransform: 'uppercase',
                             letterSpacing: '-0.02em'
                         }}>
-                            Coming Soon
+                            COMING SOON
                         </div>
                     ) : (
                         <>

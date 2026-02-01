@@ -1,0 +1,481 @@
+{
+    "version": "1.0.0",
+    "studio": {
+        "name": "REDD Studio Beşiktaş",
+        "location": "İstanbul Beşiktaş",
+        "totalNodes": 6,
+        "defaultNode": "node1",
+        "startNode": "node1",
+        "quality": {
+            "low": {
+                "tileLevel": 0,
+                "maxZoom": 1
+            },
+            "medium": {
+                "tileLevel": 1,
+                "maxZoom": 2
+            },
+            "high": {
+                "tileLevel": 2,
+                "maxZoom": 3
+            }
+        }
+    },
+    "view": {
+        "fovMode": 2,
+        "panNorth": 0,
+        "start": {
+            "fov": 100,
+            "tilt": 0,
+            "pan": 0
+        },
+        "min": {
+            "tilt": -90,
+            "pan": 0,
+            "fovPixel": 2
+        },
+        "max": {
+            "fov": 140,
+            "tilt": 90,
+            "pan": 360
+        }
+    },
+    "nodes": [
+        {
+            "id": "node1",
+            "name": "Giriş / Makyaj Alanı",
+            "description": "Stüdyo girişi ve makyaj masası",
+            "position": {
+                "x": 0,
+                "y": 0
+            },
+            "thumbnail": "/tour/thumbnails/node1.jpg",
+            "input": {
+                "width": 2000,
+                "height": 2000,
+                "tileSize": 510,
+                "levels": [
+                    {
+                        "width": 2000,
+                        "height": 2000,
+                        "preload": false
+                    },
+                    {
+                        "width": 1000,
+                        "height": 1000,
+                        "preload": false
+                    },
+                    {
+                        "width": 500,
+                        "height": 500,
+                        "preload": true
+                    }
+                ]
+            },
+            "hotspots": [
+                {
+                    "id": "Point01",
+                    "type": "navigate",
+                    "title": "Gorunum 1",
+                    "tilt": -21.84,
+                    "pan": -8.66,
+                    "targetNode": "node2"
+                },
+                {
+                    "id": "Point02",
+                    "type": "navigate",
+                    "title": "Gorunum 2",
+                    "tilt": -33.25,
+                    "pan": -93.94,
+                    "targetNode": "node3"
+                },
+                {
+                    "id": "Point03",
+                    "type": "navigate",
+                    "title": "Gorunum 3",
+                    "tilt": -18.05,
+                    "pan": -49.54,
+                    "targetNode": "node4"
+                },
+                {
+                    "id": "Point04",
+                    "type": "navigate",
+                    "title": "Gorunum 4",
+                    "tilt": -19.54,
+                    "pan": -91.46,
+                    "targetNode": "node5"
+                }
+            ]
+        },
+        {
+            "id": "node2",
+            "name": "Fotoğraf Stüdyosu",
+            "description": "Ana fotoğraf çekim alanı",
+            "position": {
+                "x": 10,
+                "y": 0
+            },
+            "thumbnail": "/tour/thumbnails/node2.jpg",
+            "input": {
+                "width": 2000,
+                "height": 2000,
+                "tileSize": 510,
+                "levels": [
+                    {
+                        "width": 2000,
+                        "height": 2000,
+                        "preload": false
+                    },
+                    {
+                        "width": 1000,
+                        "height": 1000,
+                        "preload": false
+                    },
+                    {
+                        "width": 500,
+                        "height": 500,
+                        "preload": true
+                    }
+                ]
+            },
+            "hotspots": [
+                {
+                    "id": "Point01",
+                    "type": "navigate",
+                    "title": "Gorunum 1",
+                    "tilt": -26.37,
+                    "pan": -183.69,
+                    "targetNode": "node1"
+                },
+                {
+                    "id": "Point02",
+                    "type": "navigate",
+                    "title": "Gorunum 2",
+                    "tilt": -22.36,
+                    "pan": -145.24,
+                    "targetNode": "node3"
+                },
+                {
+                    "id": "Point03",
+                    "type": "navigate",
+                    "title": "Gorunum 3",
+                    "tilt": -27.36,
+                    "pan": -95.6,
+                    "targetNode": "node3"
+                },
+                {
+                    "id": "Point04",
+                    "type": "navigate",
+                    "title": "Gorunum 4",
+                    "tilt": -19.01,
+                    "pan": -127.71,
+                    "targetNode": "node5"
+                }
+            ]
+        },
+        {
+            "id": "node3",
+            "name": "Kontrol Odası",
+            "description": "Monitör ve kontrol ekipmanları",
+            "position": {
+                "x": 10,
+                "y": 5
+            },
+            "thumbnail": "/tour/thumbnails/node3.jpg",
+            "input": {
+                "width": 2000,
+                "height": 2000,
+                "tileSize": 510,
+                "levels": [
+                    {
+                        "width": 2000,
+                        "height": 2000,
+                        "preload": false
+                    },
+                    {
+                        "width": 1000,
+                        "height": 1000,
+                        "preload": false
+                    },
+                    {
+                        "width": 500,
+                        "height": 500,
+                        "preload": true
+                    }
+                ]
+            },
+            "hotspots": [
+                {
+                    "id": "Point01",
+                    "type": "navigate",
+                    "title": "Gorunum 1",
+                    "tilt": -23.97,
+                    "pan": -273.19,
+                    "targetNode": "node1"
+                },
+                {
+                    "id": "Point02",
+                    "type": "navigate",
+                    "title": "Gorunum 2",
+                    "tilt": -17.05,
+                    "pan": -325.57,
+                    "targetNode": "node2"
+                },
+                {
+                    "id": "Point03",
+                    "type": "navigate",
+                    "title": "Gorunum 3",
+                    "tilt": -24.56,
+                    "pan": -6.81,
+                    "targetNode": "node4"
+                },
+                {
+                    "id": "Point04",
+                    "type": "navigate",
+                    "title": "Gorunum 4",
+                    "tilt": -48.71,
+                    "pan": -76.37,
+                    "targetNode": "node5"
+                }
+            ]
+        },
+        {
+            "id": "node4",
+            "name": "Oda 4",
+            "description": "Ek çekim alanı",
+            "position": {
+                "x": 5,
+                "y": 5
+            },
+            "thumbnail": "/tour/thumbnails/node4.jpg",
+            "input": {
+                "width": 2000,
+                "height": 2000,
+                "tileSize": 510,
+                "levels": [
+                    {
+                        "width": 2000,
+                        "height": 2000,
+                        "preload": false
+                    },
+                    {
+                        "width": 1000,
+                        "height": 1000,
+                        "preload": false
+                    },
+                    {
+                        "width": 500,
+                        "height": 500,
+                        "preload": true
+                    }
+                ]
+            },
+            "hotspots": [
+                {
+                    "id": "Point01",
+                    "type": "navigate",
+                    "title": "Gorunum 1",
+                    "tilt": -17.1,
+                    "pan": -235.4,
+                    "targetNode": "node1"
+                },
+                {
+                    "id": "Point02",
+                    "type": "navigate",
+                    "title": "Gorunum 2",
+                    "tilt": -22,
+                    "pan": -281.29,
+                    "targetNode": "node2"
+                },
+                {
+                    "id": "Point03",
+                    "type": "navigate",
+                    "title": "Gorunum 3",
+                    "tilt": -24.25,
+                    "pan": -213.18,
+                    "targetNode": "node3"
+                },
+                {
+                    "id": "Point04",
+                    "type": "navigate",
+                    "title": "Gorunum 4",
+                    "tilt": -29.25,
+                    "pan": -174.85,
+                    "targetNode": "node5"
+                }
+            ]
+        },
+        {
+            "id": "node5",
+            "name": "Oda 5",
+            "description": "Ek çekim alanı",
+            "position": {
+                "x": 15,
+                "y": 5
+            },
+            "thumbnail": "/tour/thumbnails/node5.jpg",
+            "input": {
+                "width": 2000,
+                "height": 2000,
+                "tileSize": 510,
+                "levels": [
+                    {
+                        "width": 2000,
+                        "height": 2000,
+                        "preload": false
+                    },
+                    {
+                        "width": 1000,
+                        "height": 1000,
+                        "preload": false
+                    },
+                    {
+                        "width": 500,
+                        "height": 500,
+                        "preload": true
+                    }
+                ]
+            },
+            "hotspots": [
+                {
+                    "id": "Point01",
+                    "type": "navigate",
+                    "title": "Gorunum 1",
+                    "tilt": -15.82,
+                    "pan": -273.6,
+                    "targetNode": "node1"
+                },
+                {
+                    "id": "Point02",
+                    "type": "navigate",
+                    "title": "Gorunum 2",
+                    "tilt": -12.95,
+                    "pan": -306.95,
+                    "targetNode": "node2"
+                },
+                {
+                    "id": "Point03",
+                    "type": "navigate",
+                    "title": "Gorunum 3",
+                    "tilt": -42.4,
+                    "pan": -277.42,
+                    "targetNode": "node3"
+                },
+                {
+                    "id": "Point04",
+                    "type": "navigate",
+                    "title": "Gorunum 4",
+                    "tilt": -24.26,
+                    "pan": -330.54,
+                    "targetNode": "node4"
+                }
+            ]
+        },
+        {
+            "id": "node6",
+            "name": "Oda 6",
+            "description": "Ek çekim alanı",
+            "position": {
+                "x": 20,
+                "y": 5
+            },
+            "thumbnail": "/tour/thumbnails/node6.jpg",
+            "input": {
+                "width": 2000,
+                "height": 2000,
+                "tileSize": 510,
+                "levels": [
+                    {
+                        "width": 2000,
+                        "height": 2000,
+                        "preload": false
+                    },
+                    {
+                        "width": 1000,
+                        "height": 1000,
+                        "preload": false
+                    },
+                    {
+                        "width": 500,
+                        "height": 500,
+                        "preload": true
+                    }
+                ]
+            },
+            "hotspots": [
+                {
+                    "id": "Point01",
+                    "type": "navigate",
+                    "title": "Gorunum 1",
+                    "tilt": -10.92,
+                    "pan": -272.41,
+                    "targetNode": "node1"
+                },
+                {
+                    "id": "Point02",
+                    "type": "navigate",
+                    "title": "Gorunum 2",
+                    "tilt": -9.03,
+                    "pan": -298.2,
+                    "targetNode": "node2"
+                },
+                {
+                    "id": "Point03",
+                    "type": "navigate",
+                    "title": "Gorunum 3",
+                    "tilt": -19.04,
+                    "pan": -272.78,
+                    "targetNode": "node3"
+                },
+                {
+                    "id": "Point04",
+                    "type": "navigate",
+                    "title": "Gorunum 4",
+                    "tilt": -17.3,
+                    "pan": -310.99,
+                    "targetNode": "node4"
+                },
+                {
+                    "id": "Point05",
+                    "type": "navigate",
+                    "title": "Gorunum 5",
+                    "tilt": -28.48,
+                    "pan": -273.02,
+                    "targetNode": "node5"
+                }
+            ]
+        }
+    ],
+    "ui": {
+        "colors": {
+            "primary": "#FF3333",
+            "background": "#0A0A0A",
+            "text": "#FFFFFF",
+            "hotspot": "#FF3333"
+        },
+        "hotspot": {
+            "animation": "/tour/animations/hotspot-pin.json",
+            "size": 36,
+            "pulseEnabled": true
+        },
+        "transition": {
+            "type": "crossdissolve",
+            "blendTime": 1,
+            "blendColor": "#000000"
+        }
+    },
+    "tilePattern": {
+        "basePath": "/tour/tiles",
+        "pattern": "{node}/cf_{face}/l_{level}/c_{column}/tile_{row}.jpg",
+        "faces": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+        ],
+        "maxLevel": 2
+    }
+}

@@ -169,6 +169,7 @@ export default function ReservationPage() {
           minHeight: "100vh",
           pt: { xs: 12, md: 14 },
           pb: 6,
+          overflowX: "hidden",
           background:
             "radial-gradient(1200px 480px at 15% -10%, rgba(255,70,70,0.2), transparent 60%), radial-gradient(1000px 500px at 100% 5%, rgba(160,0,0,0.18), transparent 55%), #070707",
         }}
@@ -185,7 +186,10 @@ export default function ReservationPage() {
               <Typography variant="overline" sx={{ letterSpacing: 2, opacity: 0.8 }}>
                 REDD Studio
               </Typography>
-              <Typography variant="h1" sx={{ mt: 1, fontSize: { xs: 36, md: 56 } }}>
+              <Typography
+                variant="h1"
+                sx={{ mt: 1, fontSize: { xs: 30, md: 56 }, lineHeight: 1.1 }}
+              >
                 Rezervasyon ve Fiyatlandirma
               </Typography>
               <Typography sx={{ mt: 2, color: "rgba(255,255,255,0.8)", maxWidth: 780 }}>
@@ -317,7 +321,9 @@ export default function ReservationPage() {
                             }
                             label={
                               <Stack spacing={0.25}>
-                                <Typography sx={{ lineHeight: 1.4 }}>{item.title}</Typography>
+                                <Typography sx={{ lineHeight: 1.4, wordBreak: "break-word" }}>
+                                  {item.title}
+                                </Typography>
                                 <Typography variant="body2" color="text.secondary">
                                   {formatCurrency(item.price)}
                                 </Typography>
@@ -487,6 +493,7 @@ export default function ReservationPage() {
                                 px: 1,
                                 py: 0.4,
                                 borderRadius: 1,
+                                minWidth: 0,
                                 bgcolor:
                                   (group.category === "studio" &&
                                     selectedPackageId === item.id) ||
@@ -495,11 +502,16 @@ export default function ReservationPage() {
                                     : "transparent",
                               }}
                             >
-                              <Stack direction="row" alignItems="center" spacing={1}>
-                                <Typography variant="body2">{item.title}</Typography>
+                              <Stack direction="row" alignItems="center" spacing={1} sx={{ minWidth: 0, flex: 1 }}>
+                                <Typography
+                                  variant="body2"
+                                  sx={{ minWidth: 0, pr: 1, wordBreak: "break-word" }}
+                                >
+                                  {item.title}
+                                </Typography>
                               </Stack>
 
-                              <Stack direction="row" alignItems="center" spacing={1}>
+                              <Stack direction="row" alignItems="center" spacing={1} sx={{ flexShrink: 0 }}>
                                 <Typography variant="body2" fontWeight={700}>
                                   {item.included ? "Dahil" : formatCurrency(item.price)}
                                 </Typography>
@@ -558,10 +570,12 @@ export default function ReservationPage() {
                       {selectedExtraItems.map((item) => (
                         <Box
                           key={item.id}
-                          sx={{ display: "flex", justifyContent: "space-between", gap: 1 }}
+                          sx={{ display: "flex", justifyContent: "space-between", gap: 1, minWidth: 0 }}
                         >
-                          <Typography variant="body2">{item.title}</Typography>
-                          <Typography variant="body2" fontWeight={700}>
+                          <Typography variant="body2" sx={{ minWidth: 0, pr: 1, wordBreak: "break-word" }}>
+                            {item.title}
+                          </Typography>
+                          <Typography variant="body2" fontWeight={700} sx={{ flexShrink: 0 }}>
                             {formatCurrency(item.price)}
                           </Typography>
                         </Box>

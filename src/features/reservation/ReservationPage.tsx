@@ -336,7 +336,6 @@ export default function ReservationPage() {
                       borderColor: "rgba(255,255,255,0.3)",
                       color: "rgba(246,247,251,0.94)",
                       justifyContent: "flex-start",
-                      textTransform: "none",
                       "&:hover": { borderColor: "rgba(255,255,255,0.5)" },
                     }}
                   >
@@ -356,7 +355,6 @@ export default function ReservationPage() {
                       borderColor: "rgba(255,255,255,0.3)",
                       color: "rgba(246,247,251,0.94)",
                       justifyContent: "flex-start",
-                      textTransform: "none",
                       "&:hover": { borderColor: "rgba(255,255,255,0.5)" },
                     }}
                   >

@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -10,39 +9,22 @@ import {
   Button,
   Card,
   CardContent,
-  Checkbox,
   Container,
   CssBaseline,
-  Divider,
-  FormControl,
-  FormControlLabel,
-  MenuItem,
-  Radio,
-  RadioGroup,
   Stack,
-  Tab,
-  Tabs,
-  TextField,
   ThemeProvider,
   Typography,
 } from "@mui/material";
 import ExpandMoreRounded from "@mui/icons-material/ExpandMoreRounded";
+import WhatsApp from "@mui/icons-material/WhatsApp";
+import EmailRounded from "@mui/icons-material/EmailRounded";
+import Instagram from "@mui/icons-material/Instagram";
 import {
   categoryLabels,
   pricingItems,
   type PricingCategory,
 } from "@/data/pricing";
 import { reddTheme } from "@/styles/muiTheme";
-import { packageTimingRules } from "@/features/reservation/constants/timingRules";
-import {
-  buildWhatsappMessage,
-  calculatePackagePrice,
-  calculateTotal,
-  formatCurrency,
-  getMinDate,
-} from "@/features/reservation/lib/booking";
-
-const bookingPhone = "905555555555";
 
 const categoryOrder: PricingCategory[] = [
   "studio",
@@ -54,143 +36,25 @@ const categoryOrder: PricingCategory[] = [
   "included",
 ];
 
+const studioPackages = pricingItems.filter((item) => item.category === "studio");
+const includedItems = pricingItems.filter((item) => item.category === "included");
+const rentalEquipmentGroups = categoryOrder
+  .filter((category) => category !== "studio" && category !== "included")
+  .map((category) => ({
+    category,
+    items: pricingItems.filter((item) => item.category === category),
+  }))
+  .filter((group) => group.items.length > 0);
+
+function formatCurrency(value: number) {
+  return new Intl.NumberFormat("tr-TR", {
+    style: "currency",
+    currency: "TRY",
+    maximumFractionDigits: 0,
+  }).format(value);
+}
+
 export default function ReservationPage() {
-  const [selectedPackageId, setSelectedPackageId] = useState("studio-half-day");
-  const [selectedExtras, setSelectedExtras] = useState<string[]>([]);
-  const [activeCategory, setActiveCategory] = useState<PricingCategory>("lighting");
-  const [formValues, setFormValues] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    date: "",
-    timeSlot: "",
-    hourCount: "2",
-    projectType: "",
-    note: "",
-  });
-
-  const packageItems = useMemo(
-    () => pricingItems.filter((item) => item.category === "studio"),
-    []
-  );
-
-  const extraItems = useMemo(
-    () =>
-      pricingItems.filter(
-        (item) => item.category !== "studio" && item.category !== "included"
-      ),
-    []
-  );
-
-  const selectableCategories = useMemo(
-    () =>
-      categoryOrder.filter((category) =>
-        extraItems.some((item) => item.category === category)
-      ),
-    [extraItems]
-  );
-
-  const filteredExtraItems = extraItems.filter(
-    (item) => item.category === activeCategory
-  );
-
-  const selectedPackage = packageItems.find((item) => item.id === selectedPackageId);
-  const selectedPackageTiming =
-    packageTimingRules[selectedPackageId] ?? packageTimingRules["studio-half-day"];
-  const selectedExtraItems = extraItems.filter((item) =>
-    selectedExtras.includes(item.id)
-  );
-  const includedItems = pricingItems.filter((item) => item.category === "included");
-
-  const groupedItems = categoryOrder
-    .map((category) => ({
-      category,
-      items: pricingItems.filter((item) => item.category === category),
-    }))
-    .filter((group) => group.items.length > 0);
-
-  const handlePackageChange = (packageId: string) => {
-    const nextTiming =
-      packageTimingRules[packageId] ?? packageTimingRules["studio-half-day"];
-
-    setSelectedPackageId(packageId);
-    setFormValues((prev) => {
-      if (nextTiming.mode === "full-day") {
-        return {
-          ...prev,
-          timeSlot: nextTiming.fixedSlot ?? nextTiming.slots[0],
-          hourCount: "2",
-        };
-      }
-
-      if (nextTiming.mode === "hourly") {
-        return {
-          ...prev,
-          timeSlot: "",
-          hourCount: prev.hourCount && Number(prev.hourCount) >= 2 ? prev.hourCount : "2",
-        };
-      }
-
-      return nextTiming.slots.includes(prev.timeSlot)
-        ? { ...prev, hourCount: "2" }
-        : { ...prev, timeSlot: "", hourCount: "2" };
-    });
-  };
-
-  const toggleExtra = (itemId: string, checked: boolean) => {
-    setSelectedExtras((prev) => {
-      if (checked) {
-        if (prev.includes(itemId)) return prev;
-        return [...prev, itemId];
-      }
-      return prev.filter((id) => id !== itemId);
-    });
-  };
-
-  const hourlyDuration = Math.max(Number(formValues.hourCount) || 0, 0);
-
-  const packagePrice = calculatePackagePrice({
-    selectedPackage,
-    selectedPackageTiming,
-    hourCount: hourlyDuration,
-  });
-
-  const totalPrice = calculateTotal(packagePrice, selectedExtraItems);
-
-  const hasValidTimeSelection =
-    selectedPackageTiming.mode === "full-day"
-      ? true
-      : Boolean(formValues.timeSlot.trim());
-
-  const hasValidHourlyDuration =
-    selectedPackageTiming.mode !== "hourly" || hourlyDuration >= 2;
-
-  const canSubmit = Boolean(
-    formValues.name.trim() &&
-      formValues.phone.trim() &&
-      formValues.date &&
-      hasValidTimeSelection &&
-      hasValidHourlyDuration
-  );
-
-  const whatsappMessage = buildWhatsappMessage({
-    selectedPackage,
-    selectedPackageTiming,
-    packagePrice,
-    hourCount: hourlyDuration,
-    selectedExtraItems,
-    totalPrice,
-    formValues,
-  });
-
-  const openWhatsApp = () => {
-    if (!canSubmit) return;
-    const link = `https://wa.me/${bookingPhone}?text=${encodeURIComponent(
-      whatsappMessage
-    )}`;
-    window.open(link, "_blank", "noopener,noreferrer");
-  };
-
   return (
     <ThemeProvider theme={reddTheme}>
       <CssBaseline />
@@ -204,7 +68,7 @@ export default function ReservationPage() {
             "radial-gradient(1200px 480px at 15% -10%, rgba(255,70,70,0.2), transparent 60%), radial-gradient(1000px 500px at 100% 5%, rgba(160,0,0,0.18), transparent 55%), #070707",
         }}
       >
-        <Container maxWidth={false} sx={{ maxWidth: 1380, px: { xs: 1.25, sm: 2.5 } }}>
+        <Container maxWidth={false} sx={{ maxWidth: 1200, px: { xs: 1.25, sm: 2.5 } }}>
           <Card
             sx={{
               border: "1px solid rgba(255,255,255,0.14)",
@@ -223,509 +87,285 @@ export default function ReservationPage() {
                 Rezervasyon ve Fiyatlandirma
               </Typography>
               <Typography sx={{ mt: 2, color: "rgba(255,255,255,0.8)", maxWidth: 780 }}>
-                Paket secimini yap, ekipmanlarini ekle ve talebini tek adimda
-                ilet. Tum fiyatlar kategorik olarak listelenir, toplam secimlerine
-                gore anlik guncellenir.
+                Bu sayfa fiyat referans ve bilgilendirme amacli kullanilir. Rezervasyon
+                icin asagidaki WhatsApp numaralarindan dogrudan bize ulasabilirsin.
               </Typography>
             </CardContent>
           </Card>
 
-          <Box
-            sx={{
-              mt: 3,
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", xl: "minmax(0, 1fr) 390px" },
-              gap: 2,
-              alignItems: "start",
-            }}
-          >
-            <Stack spacing={2}>
-              <Card variant="outlined">
-                <CardContent>
-                  <Typography variant="h3" sx={{ fontSize: { xs: 22, md: 30 } }}>
-                    1) Stüdyo Paketi
-                  </Typography>
-                  <FormControl sx={{ mt: 2, width: "100%" }}>
-                    <RadioGroup
-                      value={selectedPackageId}
-                      onChange={(event) => handlePackageChange(event.target.value)}
-                      sx={{
-                        display: "grid",
-                        gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-                        gap: 1.5,
-                      }}
-                    >
-                      {packageItems.map((item) => (
-                        <Card
-                          key={item.id}
-                          variant="outlined"
-                          sx={{
-                            borderColor:
-                              selectedPackageId === item.id
-                                ? "primary.main"
-                                : "rgba(255,255,255,0.2)",
-                            bgcolor:
-                              selectedPackageId === item.id
-                                ? "rgba(255,77,79,0.12)"
-                                : "rgba(0,0,0,0.28)",
-                          }}
-                        >
-                          <FormControlLabel
-                            value={item.id}
-                            control={<Radio />}
-                            sx={{ m: 0, p: 1.2, width: "100%", alignItems: "flex-start" }}
-                            label={
-                              <Stack spacing={0.4}>
-                                <Typography fontWeight={700}>{item.title}</Typography>
-                                {item.note && (
-                                  <Typography variant="body2" color="text.secondary">
-                                    {item.note}
-                                  </Typography>
-                                )}
-                                <Typography color="primary.main" fontWeight={700}>
-                                  {formatCurrency(item.price)}
-                                </Typography>
-                              </Stack>
-                            }
-                          />
-                        </Card>
-                      ))}
-                    </RadioGroup>
-                  </FormControl>
-                </CardContent>
-              </Card>
-
-              <Card variant="outlined">
-                <CardContent>
-                  <Typography variant="h3" sx={{ fontSize: { xs: 22, md: 30 } }}>
-                    2) Kiralık Ek Ekipmanlar
-                  </Typography>
-                  <Typography sx={{ mt: 0.8, color: "text.secondary" }}>
-                    Kategori sec ve sadece ihtiyacin olan ekipmanlari isaretle.
-                  </Typography>
-
-                  <Tabs
-                    value={Math.max(selectableCategories.indexOf(activeCategory), 0)}
-                    onChange={(_, value: number) =>
-                      setActiveCategory(selectableCategories[value])
-                    }
-                    variant="scrollable"
-                    sx={{
-                      mt: 1.5,
-                      minHeight: 44,
-                      maxWidth: "100%",
-                      "& .MuiTab-root": {
-                        minWidth: "auto",
-                        px: 1.1,
-                        fontSize: { xs: 13, sm: 14 },
-                      },
-                    }}
-                  >
-                    {selectableCategories.map((category) => (
-                      <Tab
-                        key={category}
-                        label={categoryLabels[category]}
-                        sx={{ minHeight: 44, textTransform: "none", fontWeight: 600 }}
-                      />
-                    ))}
-                  </Tabs>
-
-                  <Box
-                    sx={{
-                      mt: 1.5,
-                      display: "grid",
-                      gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-                      gap: 1,
-                    }}
-                  >
-                    {filteredExtraItems.map((item) => {
-                      const checked = selectedExtras.includes(item.id);
-                      return (
-                        <Card
-                          key={item.id}
-                          variant="outlined"
-                          sx={{
-                            borderColor: checked
-                              ? "primary.main"
-                              : "rgba(255,255,255,0.2)",
-                            bgcolor: checked
-                              ? "rgba(255,77,79,0.12)"
-                              : "rgba(0,0,0,0.25)",
-                          }}
-                        >
-                          <FormControlLabel
-                            sx={{
-                              m: 0,
-                              p: 1.2,
-                              width: "100%",
-                              alignItems: "flex-start",
-                              ".MuiFormControlLabel-label": {
-                                minWidth: 0,
-                                width: "100%",
-                              },
-                            }}
-                            control={
-                              <Checkbox
-                                checked={checked}
-                                onChange={(event) => {
-                                  toggleExtra(item.id, event.target.checked);
-                                }}
-                              />
-                            }
-                            label={
-                              <Stack spacing={0.25}>
-                                <Typography sx={{ lineHeight: 1.4, wordBreak: "break-word" }}>
-                                  {item.title}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                  {formatCurrency(item.price)}
-                                </Typography>
-                              </Stack>
-                            }
-                          />
-                        </Card>
-                      );
-                    })}
-                  </Box>
-
-                  {includedItems.length > 0 && (
-                    <Alert severity="success" sx={{ mt: 2 }}>
-                      <Typography fontWeight={700} mb={0.5}>
-                        Kiralamaya Dahil
-                      </Typography>
-                      <Stack component="ul" sx={{ pl: 2, m: 0 }}>
-                        {includedItems.map((item) => (
-                          <Typography component="li" key={item.id} variant="body2">
-                            <Box component="span" sx={{ wordBreak: "break-word" }}>
-                              {item.title}
-                            </Box>
-                            {item.note ? ` - ${item.note}` : ""}
-                          </Typography>
-                        ))}
-                      </Stack>
-                    </Alert>
-                  )}
-                </CardContent>
-              </Card>
-
-              <Card variant="outlined">
-                <CardContent>
-                  <Typography variant="h3" sx={{ fontSize: { xs: 22, md: 30 } }}>
-                    3) Rezervasyon Formu
-                  </Typography>
-
-                  <Box
-                    sx={{
-                      mt: 2,
-                      display: "grid",
-                      gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-                      gap: 1.5,
-                    }}
-                  >
-                    <TextField
-                      label="Ad Soyad *"
-                      value={formValues.name}
-                      onChange={(event) =>
-                        setFormValues((prev) => ({ ...prev, name: event.target.value }))
-                      }
-                      size="small"
-                    />
-                    <TextField
-                      label="Telefon *"
-                      value={formValues.phone}
-                      onChange={(event) =>
-                        setFormValues((prev) => ({ ...prev, phone: event.target.value }))
-                      }
-                      size="small"
-                    />
-                    <TextField
-                      label="E-posta"
-                      type="email"
-                      value={formValues.email}
-                      onChange={(event) =>
-                        setFormValues((prev) => ({ ...prev, email: event.target.value }))
-                      }
-                      size="small"
-                    />
-                    <TextField
-                      label="Tarih *"
-                      type="date"
-                      value={formValues.date}
-                      onChange={(event) =>
-                        setFormValues((prev) => ({ ...prev, date: event.target.value }))
-                      }
-                      size="small"
-                      slotProps={{
-                        inputLabel: { shrink: true },
-                        htmlInput: { min: getMinDate() },
-                      }}
-                    />
-                    {selectedPackageTiming.mode === "full-day" ? (
-                      <TextField
-                        label="Saat Aralığı"
-                        value={selectedPackageTiming.fixedSlot ?? "10:00 - 20:00"}
-                        size="small"
-                        disabled
-                        helperText="Tam gun paketinde saat araligi sabittir."
-                      />
-                    ) : selectedPackageTiming.mode === "half-day" ? (
-                      <TextField
-                        select
-                        label="Saat Aralığı *"
-                        value={formValues.timeSlot}
-                        onChange={(event) =>
-                          setFormValues((prev) => ({ ...prev, timeSlot: event.target.value }))
-                        }
-                        size="small"
-                      >
-                        <MenuItem value="">Seciniz</MenuItem>
-                        {selectedPackageTiming.slots.map((slot) => (
-                          <MenuItem key={slot} value={slot}>
-                            {slot}
-                          </MenuItem>
-                        ))}
-                      </TextField>
-                    ) : (
-                      <>
-                        <TextField
-                          label="Saat Aralığı *"
-                          placeholder="Orn: 12:00 - 15:00"
-                          value={formValues.timeSlot}
-                          onChange={(event) =>
-                            setFormValues((prev) => ({ ...prev, timeSlot: event.target.value }))
-                          }
-                          size="small"
-                          helperText="Saatlik kiralamada en az 2 saat secilmelidir."
-                        />
-                        <TextField
-                          select
-                          label="Sure (Saat) *"
-                          value={formValues.hourCount}
-                          onChange={(event) =>
-                            setFormValues((prev) => ({ ...prev, hourCount: event.target.value }))
-                          }
-                          size="small"
-                        >
-                          {[2, 3, 4, 5, 6, 7, 8].map((hour) => (
-                            <MenuItem key={hour} value={String(hour)}>
-                              {hour} saat
-                            </MenuItem>
-                          ))}
-                        </TextField>
-                      </>
-                    )}
-                    <TextField
-                      label="Proje Turu"
-                      value={formValues.projectType}
-                      onChange={(event) =>
-                        setFormValues((prev) => ({
-                          ...prev,
-                          projectType: event.target.value,
-                        }))
-                      }
-                      size="small"
-                    />
-                  </Box>
-
-                  <TextField
-                    label="Ek Not"
-                    multiline
-                    minRows={4}
-                    value={formValues.note}
-                    onChange={(event) =>
-                      setFormValues((prev) => ({ ...prev, note: event.target.value }))
-                    }
-                    sx={{ mt: 1.5, width: "100%" }}
-                  />
-                </CardContent>
-              </Card>
-
-              <Card variant="outlined">
-                <CardContent>
-                  <Typography variant="h3" sx={{ fontSize: { xs: 21, md: 26 }, mb: 1 }}>
-                    Tam Fiyat Referansi
-                  </Typography>
-                  <Typography sx={{ color: "text.secondary", mb: 1.2 }}>
-                    Bu alan sadece referans listesidir. Secili kalemler Kiralık Ek Ekipmanlar alanindaki secimlerine gore isaretlenir.
-                  </Typography>
-                  {groupedItems.map((group) => (
-                    <Accordion
-                      key={group.category}
-                      defaultExpanded={group.category === "studio"}
-                    >
-                      <AccordionSummary expandIcon={<ExpandMoreRounded />}>
-                        <Typography
-                          fontWeight={700}
-                          color="primary.main"
-                          sx={{ textTransform: "uppercase", letterSpacing: 1 }}
-                        >
-                          {categoryLabels[group.category]}
-                        </Typography>
-                      </AccordionSummary>
-                      <AccordionDetails sx={{ pt: 0.5 }}>
-                        <Stack spacing={0.8}>
-                          {group.items.map((item) => (
-                            <Box
-                              key={item.id}
-                              sx={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                gap: 2,
-                                fontSize: 14,
-                                px: 1,
-                                py: 0.4,
-                                borderRadius: 1,
-                                minWidth: 0,
-                                bgcolor:
-                                  (group.category === "studio" &&
-                                    selectedPackageId === item.id) ||
-                                  selectedExtras.includes(item.id)
-                                    ? "rgba(255,77,79,0.1)"
-                                    : "transparent",
-                              }}
-                            >
-                              <Stack direction="row" alignItems="center" spacing={1} sx={{ minWidth: 0, flex: 1 }}>
-                                <Typography
-                                  variant="body2"
-                                  sx={{ minWidth: 0, pr: 1, wordBreak: "break-word" }}
-                                >
-                                  {item.title}
-                                </Typography>
-                              </Stack>
-
-                              <Stack direction="row" alignItems="center" spacing={1} sx={{ flexShrink: 0 }}>
-                                <Typography variant="body2" fontWeight={700}>
-                                  {item.included ? "Dahil" : formatCurrency(item.price)}
-                                </Typography>
-                                {group.category === "studio" &&
-                                  selectedPackageId === item.id && (
-                                    <Typography
-                                      variant="caption"
-                                      sx={{ color: "primary.main", fontWeight: 700 }}
-                                    >
-                                      Secili
-                                    </Typography>
-                                  )}
-                              </Stack>
-                            </Box>
-                          ))}
-                        </Stack>
-                      </AccordionDetails>
-                    </Accordion>
-                  ))}
-                </CardContent>
-              </Card>
-            </Stack>
-
-            <Card
-              variant="outlined"
-              sx={{ position: { xl: "sticky" }, top: { xl: 112 } }}
-            >
+          <Stack spacing={2} sx={{ mt: 3 }}>
+            <Card variant="outlined">
               <CardContent>
-                <Typography variant="h3" sx={{ fontSize: 30, mb: 1 }}>
-                  Talep Ozeti
+                <Typography variant="h3" sx={{ fontSize: { xs: 22, md: 30 } }}>
+                  1) Stüdyo Paketleri
                 </Typography>
-
-                <Card variant="outlined" sx={{ bgcolor: "rgba(0,0,0,0.28)", p: 1.2 }}>
-                  <Typography color="text.secondary" variant="body2">
-                    Secilen Paket
-                  </Typography>
-                  <Typography fontWeight={700} mt={0.5}>
-                    {selectedPackage?.title}
-                  </Typography>
-                  {selectedPackageTiming.mode === "hourly" && (
-                    <Typography variant="body2" color="text.secondary" mt={0.2}>
-                      {formatCurrency(selectedPackage?.price ?? 0)} x {hourlyDuration} saat
-                    </Typography>
-                  )}
-                  <Typography color="primary.main" fontWeight={700}>
-                    {formatCurrency(packagePrice)}
-                  </Typography>
-                </Card>
-
-                <Card
-                  variant="outlined"
-                  sx={{ bgcolor: "rgba(0,0,0,0.28)", p: 1.2, mt: 1 }}
-                >
-                  <Typography color="text.secondary" variant="body2">
-                    Kiralık Ek Ekipmanlar
-                  </Typography>
-                  {selectedExtraItems.length === 0 ? (
-                    <Typography mt={0.5}>Ek ekipman secilmedi.</Typography>
-                  ) : (
-                    <Stack spacing={0.4} mt={0.8}>
-                      {selectedExtraItems.map((item) => (
-                        <Box
-                          key={item.id}
-                          sx={{ display: "flex", justifyContent: "space-between", gap: 1, minWidth: 0 }}
-                        >
-                          <Typography variant="body2" sx={{ minWidth: 0, pr: 1, wordBreak: "break-word" }}>
-                            {item.title}
-                          </Typography>
-                          <Typography variant="body2" fontWeight={700} sx={{ flexShrink: 0 }}>
-                            {formatCurrency(item.price)}
-                          </Typography>
-                        </Box>
-                      ))}
-                    </Stack>
-                  )}
-                </Card>
-
-                <Card
+                <Box
                   sx={{
-                    mt: 1.2,
-                    border: "1px solid rgba(255,77,79,0.6)",
-                    bgcolor: "rgba(255,77,79,0.12)",
-                    p: 1.4,
+                    mt: 2,
+                    display: "grid",
+                    gridTemplateColumns: { xs: "1fr", md: "1fr 1fr 1fr" },
+                    gap: 1.5,
                   }}
                 >
-                  <Typography color="text.secondary" variant="body2">
-                    Tahmini Toplam
-                  </Typography>
-                  <Typography
-                    sx={{ fontSize: 34, fontWeight: 800, lineHeight: 1.1, mt: 0.4 }}
-                  >
-                    {formatCurrency(totalPrice)}
-                  </Typography>
-                </Card>
+                  {studioPackages.map((item) => (
+                    <Card key={item.id} variant="outlined" sx={{ bgcolor: "rgba(0,0,0,0.25)" }}>
+                      <CardContent>
+                        <Typography sx={{ fontWeight: 700 }}>{item.title}</Typography>
+                        {item.note && (
+                          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.3 }}>
+                            {item.note}
+                          </Typography>
+                        )}
+                        <Typography color="primary.main" fontWeight={700} sx={{ mt: 0.8 }}>
+                          {formatCurrency(item.price)}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </Box>
+              </CardContent>
+            </Card>
 
-                <Button
-                  fullWidth
-                  variant="contained"
-                  color="secondary"
-                  sx={{ mt: 1.5, fontWeight: 700, color: "#0f172a" }}
-                  disabled={!canSubmit}
-                  onClick={openWhatsApp}
-                >
-                  WhatsApp ile Talep Gonder
-                </Button>
-
-                {!canSubmit && (
-                  <Typography variant="body2" color="text.secondary" mt={1}>
-                    Ad soyad, telefon ve tarih zorunludur. Yarım gun ve saatlik secimlerde saat araligi zorunludur; saatlikte minimum 2 saat gereklidir.
+            <Card variant="outlined">
+              <CardContent>
+                <Typography variant="h3" sx={{ fontSize: { xs: 22, md: 30 } }}>
+                  2) Calisma Saatleri
+                </Typography>
+                <Stack spacing={0.9} sx={{ mt: 1.5 }}>
+                  <Typography sx={{ color: "rgba(255,255,255,0.92)" }}>
+                    Tam Gun: 10:00 - 20:00
                   </Typography>
-                )}
-
-                <Divider sx={{ my: 1.5 }} />
-
-                <Stack spacing={0.6}>
-                  <Typography variant="subtitle2" fontWeight={700}>
-                    Notlar
+                  <Typography sx={{ color: "rgba(255,255,255,0.92)" }}>
+                    Yarım Gun: 09:00 - 14:00 / 15:00 - 20:00
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    - Fiyatlar bilgilendirme amaclidir.
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    - Yogunluk durumuna gore tarih onayi degisebilir.
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    - Kesin rezervasyon icin ekip onayi gerekir.
+                  <Typography sx={{ color: "rgba(255,255,255,0.92)" }}>
+                    Saatlik: 1600 TL (Min. 2 Saat)
                   </Typography>
                 </Stack>
               </CardContent>
             </Card>
-          </Box>
+
+            <Card variant="outlined">
+              <CardContent>
+                <Typography variant="h3" sx={{ fontSize: { xs: 22, md: 30 }, mb: 1 }}>
+                  3) Kiralık Ek Ekipmanlar
+                </Typography>
+                <Typography sx={{ color: "text.secondary", mb: 1.2 }}>
+                  Bu alan sadece referans listesidir.
+                </Typography>
+
+                {rentalEquipmentGroups.map((group) => (
+                  <Accordion key={group.category} defaultExpanded={group.category === "lighting"}>
+                    <AccordionSummary expandIcon={<ExpandMoreRounded />}>
+                      <Typography
+                        fontWeight={700}
+                        color="primary.main"
+                        sx={{ textTransform: "uppercase", letterSpacing: 1 }}
+                      >
+                        {categoryLabels[group.category]}
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails sx={{ pt: 0.5 }}>
+                      <Stack spacing={0.8}>
+                        {group.items.map((item) => (
+                          <Box
+                            key={item.id}
+                            sx={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              gap: 2,
+                              fontSize: 14,
+                              px: 1,
+                              py: 0.4,
+                              borderRadius: 1,
+                              minWidth: 0,
+                            }}
+                          >
+                            <Typography
+                              variant="body2"
+                              sx={{ minWidth: 0, pr: 1, wordBreak: "break-word" }}
+                            >
+                              {item.title}
+                              {item.note ? ` (${item.note})` : ""}
+                            </Typography>
+                            <Typography variant="body2" fontWeight={700} sx={{ flexShrink: 0 }}>
+                              {formatCurrency(item.price)}
+                            </Typography>
+                          </Box>
+                        ))}
+                      </Stack>
+                    </AccordionDetails>
+                  </Accordion>
+                ))}
+
+                {includedItems.length > 0 && (
+                  <Alert severity="success" sx={{ mt: 2 }}>
+                    <Typography fontWeight={700} mb={0.5}>
+                      Kiralamaya Dahil
+                    </Typography>
+                    <Stack component="ul" sx={{ pl: 2, m: 0 }}>
+                      {includedItems.map((item) => (
+                        <Typography component="li" key={item.id} variant="body2">
+                          <Box component="span" sx={{ wordBreak: "break-word" }}>
+                            {item.title}
+                          </Box>
+                          {item.note ? ` - ${item.note}` : ""}
+                        </Typography>
+                      ))}
+                    </Stack>
+                  </Alert>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card variant="outlined">
+              <CardContent>
+                <Typography variant="h3" sx={{ fontSize: { xs: 22, md: 30 } }}>
+                  4) Iletisim ve Rezervasyon
+                </Typography>
+                <Typography sx={{ mt: 0.8, color: "text.secondary" }}>
+                  En hizli geri donus icin WhatsApp hatlarini kullanin.
+                </Typography>
+
+                <Box
+                  sx={{
+                    mt: 2,
+                    p: { xs: 1.2, sm: 1.5 },
+                    border: "1px solid rgba(255,255,255,0.14)",
+                    borderRadius: 2,
+                    bgcolor: "rgba(255,255,255,0.015)",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+                      gap: 1.1,
+                    }}
+                  >
+                    <Button
+                      component="a"
+                      href="https://wa.me/905348808211"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      variant="contained"
+                      sx={{
+                        justifyContent: "flex-start",
+                        textTransform: "none",
+                        fontWeight: 700,
+                        color: "#f4fff9",
+                        bgcolor: "#168f47",
+                        px: 2,
+                        py: 1.1,
+                        minHeight: 56,
+                        borderRadius: 1.5,
+                        boxShadow: "0 2px 8px rgba(22,143,71,0.2)",
+                        "&:hover": {
+                          bgcolor: "#137d3e",
+                          boxShadow: "0 3px 10px rgba(22,143,71,0.24)",
+                        },
+                      }}
+                    >
+                      <WhatsApp sx={{ mr: 1, fontSize: 20 }} />
+                      <Stack spacing={0.1} alignItems="flex-start">
+                        <Typography sx={{ fontWeight: 700, lineHeight: 1.2, fontSize: 15 }}>
+                          WhatsApp Hatti 1
+                        </Typography>
+                        <Typography sx={{ fontSize: 13, lineHeight: 1.2, opacity: 0.95 }}>
+                          +90 534 880 82 11
+                        </Typography>
+                      </Stack>
+                    </Button>
+                    <Button
+                      component="a"
+                      href="https://wa.me/905419735370"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      variant="contained"
+                      sx={{
+                        justifyContent: "flex-start",
+                        textTransform: "none",
+                        fontWeight: 700,
+                        color: "#f4fff9",
+                        bgcolor: "#168f47",
+                        px: 2,
+                        py: 1.1,
+                        minHeight: 56,
+                        borderRadius: 1.5,
+                        boxShadow: "0 2px 8px rgba(22,143,71,0.2)",
+                        "&:hover": {
+                          bgcolor: "#137d3e",
+                          boxShadow: "0 3px 10px rgba(22,143,71,0.24)",
+                        },
+                      }}
+                    >
+                      <WhatsApp sx={{ mr: 1, fontSize: 20 }} />
+                      <Stack spacing={0.1} alignItems="flex-start">
+                        <Typography sx={{ fontWeight: 700, lineHeight: 1.2, fontSize: 15 }}>
+                          WhatsApp Hatti 2
+                        </Typography>
+                        <Typography sx={{ fontSize: 13, lineHeight: 1.2, opacity: 0.95 }}>
+                          +90 541 973 53 70
+                        </Typography>
+                      </Stack>
+                    </Button>
+                  </Box>
+                  <Typography sx={{ mt: 1.1, color: "text.secondary", fontSize: 12.5, textAlign: "center" }}>
+                    Ortalama geri donus: Gun icinde
+                  </Typography>
+                </Box>
+
+                <Box
+                  sx={{
+                    mt: 1.4,
+                    display: "grid",
+                    gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+                    gap: 1,
+                  }}
+                >
+                  <Button
+                    component="a"
+                    href="mailto:info@4redd.com"
+                    variant="outlined"
+                    startIcon={<EmailRounded />}
+                    sx={{
+                      textTransform: "none",
+                      fontWeight: 700,
+                      minHeight: 44,
+                      borderColor: "rgba(255,255,255,0.3)",
+                      color: "rgba(246,247,251,0.94)",
+                      justifyContent: "flex-start",
+                      textTransform: "none",
+                      "&:hover": { borderColor: "rgba(255,255,255,0.5)" },
+                    }}
+                  >
+                    E-posta: info@4redd.com
+                  </Button>
+                  <Button
+                    component="a"
+                    href="https://www.instagram.com/for4redd?igsh=NWYzbHZteWY3cTR6"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    variant="outlined"
+                    startIcon={<Instagram />}
+                    sx={{
+                      textTransform: "none",
+                      fontWeight: 700,
+                      minHeight: 44,
+                      borderColor: "rgba(255,255,255,0.3)",
+                      color: "rgba(246,247,251,0.94)",
+                      justifyContent: "flex-start",
+                      textTransform: "none",
+                      "&:hover": { borderColor: "rgba(255,255,255,0.5)" },
+                    }}
+                  >
+                    Instagram: @for4redd
+                  </Button>
+                </Box>
+              </CardContent>
+            </Card>
+          </Stack>
         </Container>
       </Box>
     </ThemeProvider>

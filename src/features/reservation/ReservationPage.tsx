@@ -142,7 +142,7 @@ export default function ReservationPage() {
                     Yarım Gun: 09:00 - 14:00 / 15:00 - 20:00
                   </Typography>
                   <Typography sx={{ color: "rgba(255,255,255,0.92)" }}>
-                    Saatlik: 1600 TL (Min. 2 Saat)
+                    Saatlik: 1800 TL (Min. 2 Saat)
                   </Typography>
                 </Stack>
               </CardContent>

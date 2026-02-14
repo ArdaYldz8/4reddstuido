@@ -42,7 +42,7 @@ export const pricingItems: PricingItem[] = [
   {
     id: "studio-hourly",
     title: "Saatlik Kiralama",
-    price: 1600,
+    price: 1800,
     category: "studio",
     note: "Min. 2 saat",
   },
